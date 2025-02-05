@@ -207,6 +207,8 @@ var (
 	HealthCheckPath string
 
 	ArgumentsSeparator string
+
+	MaxAllowedHeight int
 )
 
 var (
@@ -413,6 +415,8 @@ func Reset() {
 	HealthCheckPath = ""
 
 	ArgumentsSeparator = ":"
+
+	MaxAllowedHeight = 1024
 }
 
 func Configure() error {
@@ -666,6 +670,8 @@ func Configure() error {
 	configurators.Int(&DownloadBufferSize, "IMGPROXY_DOWNLOAD_BUFFER_SIZE")
 	configurators.Int(&BufferPoolCalibrationThreshold, "IMGPROXY_BUFFER_POOL_CALIBRATION_THRESHOLD")
 
+	configurators.Int(&MaxAllowedHeight, "IMGPROXY_MAX_ALLOWED_HEIGHT")
+
 	if len(Keys) != len(Salts) {
 		return fmt.Errorf("Number of keys and number of salts should be equal. Keys: %d, salts: %d", len(Keys), len(Salts))
 	}
@@ -814,6 +820,10 @@ func Configure() error {
 
 	if BufferPoolCalibrationThreshold < 64 {
 		return errors.New("Buffer pool calibration threshold should be greater than or equal to 64")
+	}
+
+	if MaxAllowedHeight <= 0 {
+		return fmt.Errorf("Max allowed height should be greater than 0, now - %d\n", MaxAllowedHeight)
 	}
 
 	return nil

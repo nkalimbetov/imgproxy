@@ -8,6 +8,7 @@ import (
 	"github.com/imgproxy/imgproxy/v3/imath"
 	"github.com/imgproxy/imgproxy/v3/options"
 	"github.com/imgproxy/imgproxy/v3/vips"
+	"github.com/imgproxy/imgproxy/v3/config"
 )
 
 func extractMeta(img *vips.Image, baseAngle int, useOrientation bool) (int, int, int, bool) {
@@ -46,6 +47,11 @@ func calcScale(width, height int, po *options.ProcessingOptions, imgtype imagety
 
 	srcW, srcH := float64(width), float64(height)
 	dstW, dstH := float64(po.Width), float64(po.Height)
+
+	if po.Height > config.MaxAllowedHeight {
+		po.Height = config.MaxAllowedHeight
+		dstH = float64(config.MaxAllowedHeight)
+	}
 
 	if po.Width == 0 {
 		dstW = srcW
